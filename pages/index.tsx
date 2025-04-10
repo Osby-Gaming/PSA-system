@@ -33,7 +33,7 @@ export default function Index(PSA: string) {
                             lastPSA = html;
                             const main = document.getElementById('main');
                             if (main) {
-                                main.innerHTML = html;
+                                main.innerHTML = renderCountdown(html);
                             }
                         })
                     }, 5000)`}
