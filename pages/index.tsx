@@ -15,6 +15,13 @@ export default function Index(PSA: string) {
                     }
                     .goldman {
                         font: 1.8rem 'Goldman';
+                    }
+                    #kioskText {
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        font: 1.2rem 'League Spartan';
                     }`}
                 </style>
             </head>
@@ -23,6 +30,7 @@ export default function Index(PSA: string) {
                     <div id="main">
                         {PSA}
                     </div>
+                    <p id="kioskText">Albin Hedwall - @wavpro</p>
                 </main>
                 <script src="/countdown.min.js" />
                 <script src="/lib.js" />
