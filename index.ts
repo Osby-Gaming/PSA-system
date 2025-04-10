@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia';
 import { html } from '@elysiajs/html';
 import fs from 'fs';
-import Index from './pages';
+import Index from './pages/index';
 import { cwd } from 'process';
 import showdown from 'showdown';
 import Edit from './pages/edit';

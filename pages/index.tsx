@@ -12,6 +12,9 @@ export default function Index(PSA: string) {
                 <style>
                     {`div {
                         font: 1.8rem 'League Spartan';
+                    }
+                    .goldman {
+                        font: 1.8rem 'Goldman';
                     }`}
                 </style>
             </head>
@@ -25,15 +28,22 @@ export default function Index(PSA: string) {
                 <script src="/lib.js" />
                 <script>
                     {`let lastPSA = document.getElementById('main').innerHTML;
+                        const main = document.getElementById('main');
+                        if (main) {
+                            lastPSA = main.innerHTML;
+                            main.innerHTML = renderCountdown(main.innerHTML);
+                        }
                     setInterval(() => {
-                        getPSA().then(html => {
-                            if (html === lastPSA) {
+                        getPSA().then((html) => {
+                            if (html.replaceAll("\\r\\n", "\\n") === lastPSA.replaceAll("\\r\\n", "\\n")) {
                                 return;
                             }
+                            console.log(lastPSA, html)
                             lastPSA = html;
                             const main = document.getElementById('main');
                             if (main) {
-                                main.innerHTML = renderCountdown(html);
+                                const render = renderCountdown(html);
+                                main.innerHTML = render;
                             }
                         })
                     }, 5000)`}

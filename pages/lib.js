@@ -13,7 +13,7 @@ async function pushPSA(md) {
     });
 }
 
-async function countdownTimeToStartValues(unix_time_ms) {
+function countdownTimeToStartValues(unix_time_ms) {
     let remaining_ms = unix_time_ms - Date.now();
 
     const days = Math.floor(remaining_ms / (1000 * 60 * 60 * 24));
@@ -32,29 +32,39 @@ async function countdownTimeToStartValues(unix_time_ms) {
 
 const timers = [];
 
-async function renderCountdown(html) {
+function renderCountdown(html) {
     for (const timer of timers) {
         timer.removeAllEventListeners();
     }
 
-    const matches = html.match(/^{\d{10,15}}$/gm);
-    for (const match of matches) {
-        const unix_time_ms = parseInt(match.replace("{", "").replace("}", ""));
-        const startValues = await countdownTimeToStartValues(unix_time_ms);
-        let timerInstance = new easytimer.Timer();
+    const matches = html.match(/{\d{10,15}}/g);
+    if (matches) {
+        for (const match of matches) {
+            const unix_time_ms = parseInt(match.replace("{", "").replace("}", ""));
+            const startValues = countdownTimeToStartValues(unix_time_ms);
+            let timerInstance = new easytimer.Timer();
+    
+            timerInstance.start({countdown: true, precision: 'seconds', startValues});
 
-        timerInstance.start({countdown: true, precision: 'seconds', startValues});
+            const countdownInclude = ['hours', 'minutes', 'seconds'];
 
-        html = html.replace(match, `<p id="timer_${unix_time_ms}">${timerInstance.getTimeValues().toString()}</p>`);
-
-        timerInstance.addEventListener('secondsUpdated', function (e) {
-            document.getElementById(`timer_${unix_time_ms}`).innerHTML = timerInstance.getTimeValues().toString();
-        });
-        
-        timerInstance.addEventListener('targetAchieved', function (e) {
-            document.getElementById(`timer_${unix_time_ms}`).innerHTML = timerInstance.getTimeValues().toString();
-        });
-
-        timers.push(timerInstance);
+            if (startValues['days'] > 0) {
+                countdownInclude.unshift('days');
+            }
+    
+            html = html.replace(match, `<span id="timer_${unix_time_ms}">${timerInstance.getTimeValues().toString(countdownInclude)}</span>`);
+    
+            timerInstance.addEventListener('secondsUpdated', function (e) {
+                document.getElementById(`timer_${unix_time_ms}`).innerHTML = timerInstance.getTimeValues().toString(countdownInclude);
+            });
+            
+            timerInstance.addEventListener('targetAchieved', function (e) {
+                document.getElementById(`timer_${unix_time_ms}`).innerHTML = timerInstance.getTimeValues().toString(countdownInclude);
+            });
+    
+            timers.push(timerInstance);
+        }
     }
+
+    return html;
 }
